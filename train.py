@@ -208,7 +208,7 @@ def train(opt):
                 continue
 
             epoch_loss = []
-            progress_bar = tqdm(training_generator)
+            progress_bar = tqdm(training_generator, disable=True)
             for iter, data in enumerate(progress_bar):
                 if iter < step - last_epoch * num_iter_per_epoch:
                     progress_bar.update()
