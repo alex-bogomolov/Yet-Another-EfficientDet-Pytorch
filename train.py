@@ -6,6 +6,7 @@ import argparse
 import datetime
 import os
 import traceback
+import subprocess
 
 import numpy as np
 import torch
@@ -315,10 +316,12 @@ def train(opt):
 
 
 def save_checkpoint(model, name):
+    path = os.path.join(opt.saved_path, name)
     if isinstance(model, CustomDataParallel):
-        torch.save(model.module.model.state_dict(), os.path.join(opt.saved_path, name))
+        torch.save(model.module.model.state_dict(), path)
     else:
-        torch.save(model.model.state_dict(), os.path.join(opt.saved_path, name))
+        torch.save(model.model.state_dict(), path)
+    subprocess.run(['aws', 's3', 'cp', path, 's3://kaggle-madison'])
 
 
 if __name__ == '__main__':
