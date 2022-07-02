@@ -321,7 +321,7 @@ def save_checkpoint(model, name):
         torch.save(model.module.model.state_dict(), path)
     else:
         torch.save(model.model.state_dict(), path)
-    subprocess.run(['aws', 's3', 'cp', path, 's3://kaggle-madison'], stdout=None)
+    subprocess.run(['aws', 's3', 'cp', path, 's3://kaggle-madison'], stdout=subprocess.DEVNULL)
 
 
 if __name__ == '__main__':

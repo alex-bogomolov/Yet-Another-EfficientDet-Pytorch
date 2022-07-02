@@ -58,7 +58,7 @@ def evaluate_coco(img_path, set_name, image_ids, coco, model, threshold=0.05):
     regressBoxes = BBoxTransform()
     clipBoxes = ClipBoxes()
 
-    for image_id in tqdm(image_ids):
+    for image_id in tqdm(image_ids, disable=True):
         image_info = coco.loadImgs(image_id)[0]
         image_path = img_path + image_info['file_name']
 
