@@ -238,7 +238,7 @@ def train(opt):
 
                     epoch_loss.append(float(loss))
 
-                    progress_bar.set_description(
+                    print(
                         'Step: {}. Epoch: {}/{}. Iteration: {}/{}. Cls loss: {:.5f}. Reg loss: {:.5f}. Total loss: {:.5f}'.format(
                             step, epoch, opt.num_epochs, iter + 1, num_iter_per_epoch, cls_loss.item(),
                             reg_loss.item(), loss.item()))
