@@ -60,6 +60,7 @@ def get_args():
     parser.add_argument('--debug', type=boolean_string, default=False,
                         help='whether visualize the predicted boxes of training, '
                              'the output images will be in test/')
+    parser.add_argument('--folder', type=str, help='S3 bucket folder')
 
     args = parser.parse_args()
     return args
@@ -253,7 +254,7 @@ def train(opt):
                     step += 1
 
                     if step % opt.save_interval == 0 and step > 0:
-                        save_checkpoint(model, f'efficientdet-d{opt.compound_coef}_{epoch}_{step}.pth')
+                        save_checkpoint(model, f'efficientdet-d{opt.compound_coef}_{epoch}_{step}.pth', opt.folder)
                         print('checkpoint...')
 
                 except Exception as e:
@@ -301,7 +302,7 @@ def train(opt):
                     best_loss = loss
                     best_epoch = epoch
 
-                    save_checkpoint(model, f'efficientdet-d{opt.compound_coef}_{epoch}_{step}.pth')
+                    save_checkpoint(model, f'efficientdet-d{opt.compound_coef}_{epoch}_{step}.pth', opt.folder)
 
                 model.train()
 
@@ -310,18 +311,18 @@ def train(opt):
                     print('[Info] Stop training at epoch {}. The lowest loss achieved is {}'.format(epoch, best_loss))
                     break
     except KeyboardInterrupt:
-        save_checkpoint(model, f'efficientdet-d{opt.compound_coef}_{epoch}_{step}.pth')
+        save_checkpoint(model, f'efficientdet-d{opt.compound_coef}_{epoch}_{step}.pth', opt.folder)
         writer.close()
     writer.close()
 
 
-def save_checkpoint(model, name):
+def save_checkpoint(model, name, folder):
     path = os.path.join(opt.saved_path, name)
     if isinstance(model, CustomDataParallel):
         torch.save(model.module.model.state_dict(), path)
     else:
         torch.save(model.model.state_dict(), path)
-    subprocess.run(['aws', 's3', 'cp', path, 's3://kaggle-madison'], stdout=subprocess.DEVNULL)
+    subprocess.Popen(['aws', 's3', 'cp', path, f's3://kaggle-madison/{folder}/'], stdout=subprocess.DEVNULL)
 
 
 if __name__ == '__main__':
